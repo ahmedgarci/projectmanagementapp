@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import com.example.demo.Application.Tasks.Interface.TasksInterface;
 import com.example.demo.Application.Tasks.Mappers.TaksMapper;
 import com.example.demo.Application.Tasks.Requests.Main.AssignTaskRequest;
 import com.example.demo.Application.Tasks.Requests.Main.SetNodeParentRequest;
-import com.example.demo.Application.Tasks.Requests.Vo.TaskPublicIdVO;
 import com.example.demo.Application.Tasks.Responses.TaskReponse;
 import com.example.demo.Application.Tasks.Responses.TaskTreeResponse;
 import com.example.demo.Domain.Repository.ProjectRepository;
@@ -58,8 +56,8 @@ public class TaskService implements TasksInterface{
 
     @Override
     @Transactional
-    public void RemoveProjectTask(TaskPublicIdVO taskPublicIdVO) {
-        Tasks parentTask = tasksRepository.findById(taskPublicIdVO.publicId()).orElseThrow(()-> new EntityNotFoundException("task was not foudn"));
+    public void RemoveProjectTask(String taskPublicIdVO) {
+        Tasks parentTask = tasksRepository.findById(taskPublicIdVO).orElseThrow(()-> new EntityNotFoundException("task was not foudn"));
         List<Tasks> subTasks = tasksRepository.findChildTasks(parentTask.getId());
         tasksRepository.deleteAll(subTasks);
         tasksRepository.delete(parentTask);

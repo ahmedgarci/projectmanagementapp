@@ -1,6 +1,7 @@
 package com.example.demo.Interface;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Application.Tasks.Interface.TasksInterface;
@@ -38,8 +39,8 @@ public class TasksController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> removeTask(@RequestBody TaskPublicIdVO taskPublicIdVO){
-        tasksService.RemoveProjectTask(taskPublicIdVO);
+    public ResponseEntity<?> removeTask(@RequestParam(name="taskId") String taskId){
+        tasksService.RemoveProjectTask(taskId);
         return new ResponseEntity<>("task deleted", HttpStatus.NO_CONTENT);
     }
 

@@ -49,18 +49,11 @@ public class ProjectController {
 
     @GetMapping("/{projectPublicId}")
     public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable String projectPublicId) {
-        System.out.println(projectPublicId);
         return ResponseEntity.ok(projectService.getProjectDetails(projectPublicId));
     }
     
     @GetMapping("/all")
     public ResponseEntity<List<ProjectDetailsResponse>> getAllProjects(){
         return ResponseEntity.ok(projectService.getAllUserProjectsDetails());
-    }
-
-   
-        
-
-    
-
+    }    
 }

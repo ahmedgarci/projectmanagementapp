@@ -17,4 +17,6 @@ public interface TokenRepository extends CrudRepository<Token,Long> {
 
     @Query(name = "GetUserValidTokens")
     List<Token> findAllValidUserTokens(@Param("userId") Long userId);
+
+    void deleteAllByRevokedAndExpired(boolean revoked, boolean expired);
 }
