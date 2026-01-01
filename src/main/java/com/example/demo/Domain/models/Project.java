@@ -23,7 +23,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +36,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+// THIS QUERY SEARCHS FOR THE PROJECTS THAT THE GIVEN USER IS INVOLVED IN
 @NamedQuery(
     name = ProjectConstants.findProjectsByUser,
     query = "SELECT DISTINCT p FROM Project p WHERE :user MEMBER OF p.users"

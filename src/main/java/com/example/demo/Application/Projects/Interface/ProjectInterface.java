@@ -16,5 +16,4 @@ public interface ProjectInterface {
     ProjectDetailsResponse getProjectDetails(String publicId );
     List<ProjectDetailsResponse> getAllUserProjectsDetails();
     UserProjectsStats getUserProjectsStats();
-    UserTasksStats getUserTasksStats();
 }   

@@ -126,14 +126,14 @@ public class TaskService implements TasksInterface{
         List<Tasks> destNodeSubTasks = tasksRepository.findChildTasks(request.getDestination().publicId());
         for(Tasks child : destNodeSubTasks){
             if(!visited.contains(child.getId()) && DFS(child,request.getSource().parentTaskPublicId(), visited)){
-                return false;
+                return true;
             }
         }
         Tasks sourceTask = tasksRepository.findById(request.getSource().parentTaskPublicId()).orElseThrow(()->new EntityNotFoundException("task not found"));
         Tasks destTask  = tasksRepository.findById(request.getDestination().publicId()).orElseThrow(()->new EntityNotFoundException(""));
         destTask.setParentTask(sourceTask);
         tasksRepository.save(sourceTask);
-        return true;
+        return false;
     }
     
     private boolean DFS(Tasks source, String dest ,Set<String> visited){

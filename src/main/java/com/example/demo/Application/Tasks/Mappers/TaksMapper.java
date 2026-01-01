@@ -6,11 +6,10 @@ import org.mapstruct.Mapping;
 import com.example.demo.Application.Tasks.Requests.Main.AssignTaskRequest;
 import com.example.demo.Application.Tasks.Responses.TaskReponse;
 import com.example.demo.Domain.models.Project;
-import com.example.demo.Domain.models.Stages;
 import com.example.demo.Domain.models.Tasks;
 import com.example.demo.Domain.models.User;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TaksMapper  {
     
     @Mapping(source = "request.taskVo.task", target = "task")

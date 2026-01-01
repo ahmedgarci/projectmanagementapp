@@ -29,18 +29,19 @@ import lombok.Setter;
 @NamedQuery(name = "GetUserValidTokens",
     query = "SELECT t FROM Token t WHERE user.id = :userId AND (t.expired= false OR t.revoked = false)" 
     )
-@Table(indexes = @Index(name = "token_email_Index", columnList = "jwt_token"))
+@Table(indexes = @Index(name = "token_Index", columnList = "jwt_token"))
 public class Token {
 
     @Id
     @GeneratedValue(strategy =GenerationType.IDENTITY )
     private Long id;
 
-    @Column(name = "jwt_token",nullable = false)
+    @Column(name = "jwt_token",nullable = false,columnDefinition = "VARCHAR(300)")
     private String token;
 
     @Column(name = "is_token_expired",nullable = false)
     private boolean expired;
+
     @Column(name = "is_token_revoked",nullable = false)
     private boolean revoked;
 

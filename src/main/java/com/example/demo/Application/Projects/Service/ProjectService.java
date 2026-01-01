@@ -13,6 +13,7 @@ import com.example.demo.Application.Projects.Requests.Main.CreateProjectRequest;
 import com.example.demo.Application.Projects.Requests.VO.ProjectPublicIdVO;
 import com.example.demo.Application.Projects.Responses.ProjectDetailsResponse;
 import com.example.demo.Application.Projects.Responses.UserProjectsStats;
+import com.example.demo.Application.Tasks.Responses.UserTasksStats;
 import com.example.demo.Domain.Repository.ProjectRepository;
 import com.example.demo.Domain.Repository.StagesRepository;
 import com.example.demo.Domain.Repository.UserRepository;
@@ -87,5 +88,7 @@ public class ProjectService implements ProjectInterface{
         User user = SecurityUtils.getConnectedUser();        
         return projectRepository.getUserProjectsStat(user.getId());
     }
+
+ 
     
 }

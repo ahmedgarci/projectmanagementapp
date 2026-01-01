@@ -1,6 +1,7 @@
 package com.example.demo.Infrastructure.FileUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUtils {
 
     public static PrivateKey loadPrivateKey(final String keyPath) {
+        log.info(keyPath);
         try {
             final String content = getFileContent(keyPath);
             if (content == null) {
@@ -53,17 +55,17 @@ public class FileUtils {
     }
 
     private static String getFileContent(String path) {
-        try {
-            ClassPathResource resource = new ClassPathResource(path);
-            String raw = Files.readString(resource.getFile().toPath());
-
-            // Remove headers and all whitespace (newlines, spaces, tabs)
+    try {
+        ClassPathResource resource = new ClassPathResource(path);
+        try (InputStream is = resource.getInputStream()) {
+            String raw = new String(is.readAllBytes());
             return raw.replaceAll("-----BEGIN (.*)-----", "")
                       .replaceAll("-----END (.*)-----", "")
                       .replaceAll("\\s", "");
-        } catch (IOException e) {
-            log.error("Failed to read key file from classpath: {}", path, e);
-            return null;
         }
+    } catch (IOException e) {
+        log.error("Failed to read key file from classpath: {}", path, e);
+        return null;
     }
+}
 }
