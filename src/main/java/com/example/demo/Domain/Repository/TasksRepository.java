@@ -15,7 +15,6 @@ import com.example.demo.Domain.models.Tasks;
 
 @Repository
 public interface TasksRepository extends CrudRepository<Tasks,String> {
-//    Optional<Tasks> findById(String id);
 
     @Query(name = TasksConstants.FIND_CHILD_TASKS)
     List<Tasks> findChildTasks(@Param("parentTask_id")String parentTask_id);

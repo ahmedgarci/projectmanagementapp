@@ -31,7 +31,7 @@ public class RequestFilterConfig extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
-
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -53,11 +53,14 @@ public class RequestFilterConfig extends OncePerRequestFilter {
             username = jwtService.extractUsernameFromToken(token);
         } catch (ExpiredJwtException e) {
             markTokenAsExpired(token);
-            throw new CustomJWTexpiredException("token is expired");
-        } catch (Exception e) {
+            authenticationEntryPoint.commence(request, response,
+            new CustomJWTexpiredException("Token expired"));
+            return; 
+       } catch (Exception e) {
             log.error("Failed to extract username from token.", e);
-            filterChain.doFilter(request, response);
-            return;
+            authenticationEntryPoint.commence(request, response,
+            new CustomJWTexpiredException("invalid token"));
+            return; 
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

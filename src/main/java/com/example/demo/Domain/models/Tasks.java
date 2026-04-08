@@ -39,7 +39,7 @@ import lombok.Setter;
 )
 @NamedQuery(
     name = TasksConstants.GET_USER_ALL_PROJECTS_URGENT_TASKS,
-    query = "SELECT t FROM Tasks t WHERE (t.stage.id=2 AND user.id = :userId) ORDER BY finishingDate  LIMIT 5 "
+    query = "SELECT t FROM Tasks t WHERE (t.stage.id=2 AND user.id = :userId) ORDER BY finishingDate DESC  LIMIT 5 "
 )
 
 public class Tasks {

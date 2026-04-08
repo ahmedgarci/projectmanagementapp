@@ -26,6 +26,7 @@ public interface ProjectMapper {
     @Mapping(source = "startingDate",target = "startedAt")
     @Mapping(source = "endingDate",target = "endsAt")
     @Mapping(source = "stage.stageName", target = "stage")
+    @Mapping(target = "projectTasks",ignore = true)
     ProjectDetailsResponse fromProjectToProjectDetailsResponse(Project project);
 
 }

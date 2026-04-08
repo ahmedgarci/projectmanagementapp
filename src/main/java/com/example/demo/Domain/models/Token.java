@@ -36,7 +36,7 @@ public class Token {
     @GeneratedValue(strategy =GenerationType.IDENTITY )
     private Long id;
 
-    @Column(name = "jwt_token",nullable = false,columnDefinition = "VARCHAR(300)")
+    @Column(name = "jwt_token",nullable = false,columnDefinition = "VARCHAR(512)")
     private String token;
 
     @Column(name = "is_token_expired",nullable = false)

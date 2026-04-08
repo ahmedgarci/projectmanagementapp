@@ -22,12 +22,13 @@ public class FilterChainConfig {
     private final LogoutHandlerImpl logoutHandlerImpl;
     private final CorsConfigurationSource corsConfig;
     private final Oauth2LoginSuccessHandler oauthSuccessHandler;
-
+    
     @Bean
     public SecurityFilterChain filter(HttpSecurity http)throws Exception{
         http
             .cors(c -> c.configurationSource(corsConfig))
             .csrf(csrf -> csrf.disable())
+            .exceptionHandling((ex)-> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
             .authorizeHttpRequests((request) -> request.requestMatchers(
                     "/authentication/register",
                     "/authentication/authenticate",

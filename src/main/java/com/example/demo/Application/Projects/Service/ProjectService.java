@@ -80,7 +80,11 @@ public class ProjectService implements ProjectInterface{
     public List<ProjectDetailsResponse> getAllUserProjectsDetails() {
         User connectedUser = SecurityUtils.getConnectedUser();
         List<Project> projects = projectRepository.findProjectsByUser(connectedUser);
-        return projects.stream().map(projectMapper::fromProjectToProjectDetailsResponse).collect(Collectors.toList());
+        return projects.stream().map(project -> {
+            ProjectDetailsResponse projectDetails = projectMapper.fromProjectToProjectDetailsResponse(project);
+            projectDetails.setProjectTasks(projectRepository.getProjectTaskStats(project.getId()));
+            return projectDetails;
+        }).collect(Collectors.toList());
     }
 
     @Override

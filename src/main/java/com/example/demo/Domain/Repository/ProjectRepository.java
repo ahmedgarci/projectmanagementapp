@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.demo.Application.Projects.Responses.TasksStatResponse;
 import com.example.demo.Application.Projects.Responses.UserProjectsStats;
 import com.example.demo.Domain.Constants.ProjectConstants;
 import com.example.demo.Domain.models.Project;
@@ -32,5 +33,15 @@ public interface ProjectRepository extends JpaRepository<Project,Long>{
         WHERE u.id = :userId
     """)
     UserProjectsStats getUserProjectsStat(@Param("userId") Long userId );
+
+    @Query("""
+    SELECT new com.example.demo.Application.Projects.Responses.TasksStatResponse(
+        IFNULL(COUNT(t),0),
+        IFNULL(SUM(CASE WHEN t.stage.id = 1 THEN 1 ELSE 0 END),0)
+    )
+    FROM Tasks t
+    WHERE t.project.id = :projectId
+""")
+    TasksStatResponse getProjectTaskStats(@Param("projectId") Long projectId);
 
 }

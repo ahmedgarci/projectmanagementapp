@@ -16,6 +16,7 @@ public class TaskTreeResponse {
     private String task ; 
     private LocalDate taskEndingDate;
     private LocalDate taskStartingDate;
+    private String assignedToUserName;
     private List<TaskTreeResponse> children;
     private String stage;
 
@@ -26,5 +27,6 @@ public class TaskTreeResponse {
         this.task = taks.getTask();
         this.children = new ArrayList<>();
         this.stage = taks.getStage().getStageName();
+        this.assignedToUserName = taks.getUser().getFullName();
     }
 }

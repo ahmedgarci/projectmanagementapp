@@ -2,6 +2,7 @@ package com.example.demo.Application.Projects.Responses;
 
 import java.util.List;
 
+import com.example.demo.Application.Tasks.Responses.ProjectTasksResponse;
 import com.example.demo.Domain.models.User;
 
 import lombok.AllArgsConstructor;
@@ -30,4 +31,6 @@ public class ProjectDetailsResponse {
     private List<User> contributors;
 
     private String stage;
+
+    private TasksStatResponse projectTasks;
 }

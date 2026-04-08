@@ -2,6 +2,7 @@ package com.example.demo.Application.Tasks.Mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.example.demo.Application.Tasks.Requests.Main.AssignTaskRequest;
 import com.example.demo.Application.Tasks.Responses.TaskReponse;

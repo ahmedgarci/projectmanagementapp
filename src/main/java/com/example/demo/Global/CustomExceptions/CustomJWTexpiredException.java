@@ -1,6 +1,8 @@
 package com.example.demo.Global.CustomExceptions;
 
-public class CustomJWTexpiredException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class CustomJWTexpiredException extends AuthenticationException {
         public CustomJWTexpiredException(String msg){
             super(msg);
         }

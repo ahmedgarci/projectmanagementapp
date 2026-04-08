@@ -26,10 +26,10 @@ public class GlobalHandler {
 
     @ExceptionHandler(CustomJWTexpiredException.class)
     public ResponseEntity<ErrorResponse> handleJwtExipration(CustomJWTexpiredException ex){
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex.getMessage(),HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex.getMessage(),HttpStatus.UNAUTHORIZED.value()),HttpStatus.UNAUTHORIZED);
     }
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleJwtExpiration(EntityAlreadyExistsException ex){
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExisysException(EntityAlreadyExistsException ex){
         return new ResponseEntity<ErrorResponse>(new ErrorResponse("user already exists with that email",HttpStatus.CONFLICT.value()),HttpStatus.CONFLICT);
     }
 
