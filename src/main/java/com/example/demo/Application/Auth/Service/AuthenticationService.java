@@ -39,7 +39,7 @@ public class AuthenticationService implements AuthInterface {
     public void RegisterNewUser(RegisterUserRequest registerUserRequest) {
         Optional<User> userOpt = userRepository.findByEmail(registerUserRequest.getUserEmailVo().email());
         if(userOpt.isPresent()){
-            throw new EntityAlreadyExistsException("user already exists");
+            throw new EntityAlreadyExistsException("user already existss");
         }
         User user = User.builder().email(registerUserRequest.getUserEmailVo().email())
         .fullName(registerUserRequest.getUserIdentifiersVo().fullName())
