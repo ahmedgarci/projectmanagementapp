@@ -48,7 +48,6 @@ public class Tasks {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;  
 
-
     @ManyToOne
     @JoinColumn(name = "parent_task",nullable = true , updatable = true)
     private Tasks parentTask;

@@ -12,7 +12,7 @@ import com.example.demo.Domain.models.Project;
 public interface ProjectMapper {
 
 
-    @Mapping(source = "endingDateVo.endingDate",target = "endingDate")
+    @Mapping(source = "endingDateVo.endingDate",target  = "endingDate")
     @Mapping(source = "startingDateVo.startingDate",target = "startingDate")
     @Mapping(source = "projectDescroptionVo.description",target = "projectDescription")
     @Mapping(source = "projectNameVo.name",target = "projectName")

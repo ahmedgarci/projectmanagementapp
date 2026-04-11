@@ -21,9 +21,9 @@ import com.example.demo.Infrastructure.Security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 import lombok.RequiredArgsConstructor;
-import lombok.var;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class AuthenticationService implements AuthInterface {
     @Override
     public AuthenticatedResponse AuthenticateUser(AuthenticateUserRequest authenticateUserRequest) {
         try {
-            var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticateUserRequest.getUserEmailVo().email(),
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticateUserRequest.getUserEmailVo().email(),
             authenticateUserRequest.getUserPasswordVo().password()));      
             User user = (User)authentication.getPrincipal();
             this.RevokeAllUserValidToken(user.getId());
