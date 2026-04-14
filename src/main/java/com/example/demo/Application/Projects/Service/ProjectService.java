@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.Application.Projects.Interface.ProjectInterface;
 import com.example.demo.Application.Projects.Mappers.ProjectMapper;
 import com.example.demo.Application.Projects.Requests.Main.CreateProjectRequest;
-import com.example.demo.Application.Projects.Requests.VO.ProjectPublicIdVO;
 import com.example.demo.Application.Projects.Responses.ProjectDetailsResponse;
 import com.example.demo.Application.Projects.Responses.UserProjectsStats;
-import com.example.demo.Application.Tasks.Responses.UserTasksStats;
 import com.example.demo.Domain.Repository.ProjectRepository;
 import com.example.demo.Domain.Repository.StagesRepository;
 import com.example.demo.Domain.Repository.UserRepository;
@@ -58,13 +56,14 @@ public class ProjectService implements ProjectInterface{
     }
 
     @Override
-    public void DeleteProject(ProjectPublicIdVO projectPublicIdvo) {
-        Optional<Project> projectOptional = projectRepository.findByPublicId(projectPublicIdvo.projectPublicId());   
-        if(projectOptional.isPresent()){
-            projectRepository.delete(projectOptional.get());
-            return;
+    public void DeleteProject(String projectPublicIdvo) {
+        Project projectToBeDeleted = projectRepository.findByPublicId(projectPublicIdvo)
+        .orElseThrow(()->new EntityNotFoundException("project was not found "));   
+        for( User user : projectToBeDeleted.getUsers()){
+            user.getProjects().remove(projectToBeDeleted);
         }
-        throw new EntityNotFoundException("project was not found ");
+        projectToBeDeleted.getUsers().clear();
+        projectRepository.delete(projectToBeDeleted);        
     }
 
     @Override

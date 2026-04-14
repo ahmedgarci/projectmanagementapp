@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record ProjectNameVO(
 
-    @NotBlank(message = "project name value should be present")
+    @NotBlank(message = "project name value must be present")
     String name
 ) {
     

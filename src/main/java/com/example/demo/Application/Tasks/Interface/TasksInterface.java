@@ -9,7 +9,7 @@ import com.example.demo.Application.Tasks.Responses.TaskReponse;
 import com.example.demo.Application.Tasks.Responses.TaskTreeResponse;
 
 public interface TasksInterface {
-    void AssignTaskToContributor(AssignTaskRequest request);    
+    TaskTreeResponse AssignTaskToContributor(AssignTaskRequest request);    
     void RemoveProjectTask(String taskPublicId);
     void SetTaskAsFinished(String taskPublicId);
     List<TaskReponse> getUserUrgentTasks();

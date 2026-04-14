@@ -41,14 +41,14 @@ public class ProjectController {
     }
     
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteProject(@RequestBody @Valid ProjectPublicIdVO projectPublicIdVO){
+    @DeleteMapping("/{projectPublicIdVO}")
+    public ResponseEntity<String> deleteProject(@PathVariable(required = true) String projectPublicIdVO){
         projectService.DeleteProject(projectPublicIdVO);
-        return new ResponseEntity<String>("project deleted !", HttpStatus.ACCEPTED);
+        return new ResponseEntity<String>("project deleted !", HttpStatus.OK);
     }
 
     @GetMapping("/{projectPublicId}")
-    public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable String projectPublicId) {
+    public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable(required = true) String projectPublicId) {
         return ResponseEntity.ok(projectService.getProjectDetails(projectPublicId));
     }
     

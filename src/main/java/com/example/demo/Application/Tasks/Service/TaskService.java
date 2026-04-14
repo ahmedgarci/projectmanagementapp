@@ -41,7 +41,7 @@ public class TaskService implements TasksInterface{
 
     @Override
     @Transactional
-    public void AssignTaskToContributor(AssignTaskRequest request) {
+    public TaskTreeResponse AssignTaskToContributor(AssignTaskRequest request) {
         User user = userRepository.findByPublicId(request.getUserIdVo().userPublicId()).orElseThrow(()-> new EntityNotFoundException("user was not foudn"));
         Tasks parentTask= null;
         if(request.getParentTaskPublicIdVo() != null && request.getParentTaskPublicIdVo().parentTaskPublicId() != null &&  !request.getParentTaskPublicIdVo().parentTaskPublicId().isEmpty()){
@@ -52,6 +52,7 @@ public class TaskService implements TasksInterface{
         Tasks task = taksMapper.fromAssignTaskRequestToTaskEntity(request,parentTask,user,project);
         task.setStage(stage);
         tasksRepository.save(task);
+        return new TaskTreeResponse(task);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class TaskService implements TasksInterface{
             }
         }
         Tasks sourceTask = tasksRepository.findById(request.getSource().parentTaskPublicId()).orElseThrow(()->new EntityNotFoundException("task not found"));
-        Tasks destTask  = tasksRepository.findById(request.getDestination().publicId()).orElseThrow(()->new EntityNotFoundException(""));
+        Tasks destTask  = tasksRepository.findById(request.getDestination().publicId()).orElseThrow(()->new EntityNotFoundException("task target not found"));
         destTask.setParentTask(sourceTask);
         tasksRepository.save(sourceTask);
         return false;

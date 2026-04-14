@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.demo.Domain.Repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -34,7 +35,8 @@ public class SecurityBeansConfig {
             @Override
             public  UserDetails loadUserByUsername(String username)throws UsernameNotFoundException{
                 return userRepository.findByEmail(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));            }
+                    .orElseThrow(() -> new EntityNotFoundException("User was not found "));       
+            }
         };
     }
 
@@ -60,7 +62,7 @@ public class SecurityBeansConfig {
     @Primary 
     public CorsConfigurationSource setUpCorsConfig(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));// or the front end only
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));// or the front end only
         configuration.setAllowedMethods(List.of("GET","POST","DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));

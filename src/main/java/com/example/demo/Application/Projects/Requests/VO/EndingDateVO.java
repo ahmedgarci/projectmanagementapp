@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 public record EndingDateVO(
 
     @NotNull(message = "starting date is required")
-    @Future(message = "ending date should be in the future")
+    @Future(message = "ending date should not be in the past")
     LocalDate endingDate
 ) {
 }

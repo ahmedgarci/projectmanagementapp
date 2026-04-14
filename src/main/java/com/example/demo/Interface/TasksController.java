@@ -10,6 +10,7 @@ import com.example.demo.Application.Tasks.Requests.Main.SetNodeParentRequest;
 import com.example.demo.Application.Tasks.Responses.TaskReponse;
 import com.example.demo.Application.Tasks.Responses.TaskTreeResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -32,9 +33,8 @@ public class TasksController {
     private final TasksInterface tasksService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> assignNewTask(@RequestBody AssignTaskRequest request) {
-        tasksService.AssignTaskToContributor(request);
-        return new ResponseEntity<>("task assigned to user ", HttpStatus.CREATED);
+    public ResponseEntity<?> assignNewTask(@Valid @RequestBody AssignTaskRequest request) {
+        return new ResponseEntity<>(tasksService.AssignTaskToContributor(request),HttpStatus.CREATED);
     }
 
     @DeleteMapping

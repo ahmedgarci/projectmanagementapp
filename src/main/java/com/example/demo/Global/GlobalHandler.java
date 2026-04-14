@@ -1,8 +1,14 @@
 package com.example.demo.Global;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +37,18 @@ public class GlobalHandler {
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExisysException(EntityAlreadyExistsException ex){
         return new ResponseEntity<ErrorResponse>(new ErrorResponse("user already exists with that email",HttpStatus.CONFLICT.value()),HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String,String>> handleInvalidFormInputs(MethodArgumentNotValidException ex){
+        List<FieldError> fieldErrors = ex.getFieldErrors();
+        Map<String,String> map = new HashMap<>();
+        fieldErrors.forEach(error -> {
+            String fieldName = error.getField();
+            String flattenedFieldName = fieldName.substring(fieldName.indexOf(".")+1);
+            map.put(flattenedFieldName, error.getDefaultMessage());
+        });
+       return ResponseEntity.badRequest().body(map);
     }
 
 
