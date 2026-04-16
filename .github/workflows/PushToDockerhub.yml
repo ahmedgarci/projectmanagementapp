@@ -28,7 +28,6 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Build Backend Image
-        run: docker build -t ${{ secrets.USERNAME }}/spring-back:1.0 .
-      
+        run: docker build -t ${{ secrets.USERNAME }}/project-manag-java:1.2 .
       - name: publish image to dockerhub
-        run: docker push ${{ secrets.USERNAME }}/spring-back:1.0 
+        run: docker push ${{ secrets.USERNAME }}/project-manag-java:1.2 
