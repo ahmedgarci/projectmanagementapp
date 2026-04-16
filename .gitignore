@@ -33,4 +33,4 @@ build/
 .vscode/
 projectmanagementapp/.idx
 
-
+projectmanagementapp\src\main\resources\application-env.properties

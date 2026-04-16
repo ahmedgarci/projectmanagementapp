@@ -2,6 +2,7 @@ package com.example.demo.Infrastructure.Security;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -28,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityBeansConfig {
 
     private final UserRepository userRepository;
+    @Value("${config.frontEndUrl}")
+    private String frontEnd;
 
     @Bean
     public UserDetailsService getUserDetailsService(){
@@ -62,7 +65,7 @@ public class SecurityBeansConfig {
     @Primary 
     public CorsConfigurationSource setUpCorsConfig(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));// or the front end only
+        configuration.setAllowedOrigins(List.of(frontEnd));
         configuration.setAllowedMethods(List.of("GET","POST","DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
