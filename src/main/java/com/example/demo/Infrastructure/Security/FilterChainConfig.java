@@ -40,7 +40,7 @@ public class FilterChainConfig {
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(requestFilterConfig, UsernamePasswordAuthenticationFilter.class)
-        .oauth2Login( (oauth) -> oauth.successHandler(oauthSuccessHandler))
+      //  .oauth2Login( (oauth) -> oauth.successHandler(oauthSuccessHandler))
         .logout(logout -> logout.logoutUrl("/logout")
                             .addLogoutHandler(logoutHandlerImpl)
         );

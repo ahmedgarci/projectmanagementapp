@@ -43,11 +43,10 @@ public class ProjectService implements ProjectInterface{
         }
         Project project = projectMapper.fromCreateProjectRequestToProject(createProjectRequest);
         projectRepository.save(project);
-        User connectedUser = SecurityUtils.getConnectedUser();
-        User user = userRepository.findById(connectedUser.getId())
+        User user = userRepository.findById(SecurityUtils.getConnectedUser().getId())
         .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Stages inprogressStage = stagesRepository.findByStageName("inProgress").orElseThrow(()-> new EntityNotFoundException("stage was not found"));
-        if(user.getProjects() == null || user.getProjects().isEmpty()){
+        if(user.getProjects() == null ){
             user.setProjects(new HashSet<>());
         }
         user.getProjects().add(project);
@@ -56,6 +55,7 @@ public class ProjectService implements ProjectInterface{
     }
 
     @Override
+    @Transactional
     public void DeleteProject(String projectPublicIdvo) {
         Project projectToBeDeleted = projectRepository.findByPublicId(projectPublicIdvo)
         .orElseThrow(()->new EntityNotFoundException("project was not found "));   
@@ -68,14 +68,12 @@ public class ProjectService implements ProjectInterface{
 
     @Override
     public ProjectDetailsResponse getProjectDetails(String publicId) {
-        Optional<Project> projectOptional = projectRepository.findByPublicId(publicId);   
-        if(!projectOptional.isPresent()){
-            throw new EntityNotFoundException("project was not found ");
-        }
-        return projectMapper.fromProjectToProjectDetailsResponse(projectOptional.get());
+        Project project = projectRepository.findByPublicId(publicId).orElseThrow(()->new EntityNotFoundException("project was not found "));
+        return projectMapper.fromProjectToProjectDetailsResponse(project);
     }
 
     @Override
+    //TO FIX N+1 PROBLEM
     public List<ProjectDetailsResponse> getAllUserProjectsDetails() {
         User connectedUser = SecurityUtils.getConnectedUser();
         List<Project> projects = projectRepository.findProjectsByUser(connectedUser);

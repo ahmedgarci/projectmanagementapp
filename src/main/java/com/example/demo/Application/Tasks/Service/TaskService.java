@@ -27,6 +27,7 @@ import com.example.demo.Infrastructure.Security.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -42,9 +43,9 @@ public class TaskService implements TasksInterface{
     @Override
     @Transactional
     public TaskTreeResponse AssignTaskToContributor(AssignTaskRequest request) {
-        User user = userRepository.findByPublicId(request.getUserIdVo().userPublicId()).orElseThrow(()-> new EntityNotFoundException("user was not foudn"));
+        User user = userRepository.findByPublicId(request.getUserIdVo().userPublicId()).orElseThrow(()-> new EntityNotFoundException("user was not found"));
         Tasks parentTask= null;
-        if(request.getParentTaskPublicIdVo() != null && request.getParentTaskPublicIdVo().parentTaskPublicId() != null &&  !request.getParentTaskPublicIdVo().parentTaskPublicId().isEmpty()){
+        if(request.getParentTaskPublicIdVo() != null && request.getParentTaskPublicIdVo().parentTaskPublicId() != null){
             parentTask = tasksRepository.findById(request.getParentTaskPublicIdVo().parentTaskPublicId()).orElseThrow(()-> new EntityNotFoundException("user was not foudn"));
         }
         Project project = projectRepository.findByPublicId(request.getProjectPublicIdVo().projectPublicId()).orElseThrow(()-> new EntityNotFoundException("project was not foudn"));
@@ -56,12 +57,9 @@ public class TaskService implements TasksInterface{
     }
 
     @Override
-    @Transactional
-    public void RemoveProjectTask(String taskPublicIdVO) {
-        Tasks parentTask = tasksRepository.findById(taskPublicIdVO).orElseThrow(()-> new EntityNotFoundException("task was not foudn"));
-        List<Tasks> subTasks = tasksRepository.findChildTasks(parentTask.getId());
-        tasksRepository.deleteAll(subTasks);
-        tasksRepository.delete(parentTask);
+    public void RemoveProjectTask(@NotNull String taskPublicId) {
+        Tasks targetTask = tasksRepository.findById(taskPublicId).orElseThrow(()-> new EntityNotFoundException("task was not foudn"));
+        tasksRepository.delete(targetTask);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class TaskService implements TasksInterface{
         Project project =  projectRepository.findByPublicId(projectPublicIdVo).orElseThrow(()-> new EntityNotFoundException("task was not found"));
         List<Tasks> projectTasks = tasksRepository.findByProject(project);
         if(projectTasks.isEmpty()){
-            return null;
+            return List.of();
         }
         return constructTasksTree(projectTasks);
     }

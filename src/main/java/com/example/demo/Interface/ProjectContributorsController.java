@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +30,8 @@ public class ProjectContributorsController {
     private final ProjectContributorsManagementInterface projectContributorService;
 
     @PostMapping
-    public ResponseEntity<String> addNewContributorToProject(@RequestBody @Valid  AddContributorRequest addContributorRequest,Authentication authentication) {
-        projectContributorService.addNewContributorToProject(addContributorRequest,authentication);        
+    public ResponseEntity<String> addNewContributorToProject(@RequestBody @Valid  AddContributorRequest addContributorRequest) {
+        projectContributorService.addNewContributorToProject(addContributorRequest);        
         return new ResponseEntity<>("invitation sent !",HttpStatus.OK);
     }
 

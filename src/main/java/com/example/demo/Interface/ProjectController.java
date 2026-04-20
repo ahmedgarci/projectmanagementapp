@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Application.Projects.Interface.ProjectInterface;
 import com.example.demo.Application.Projects.Requests.Main.CreateProjectRequest;
-import com.example.demo.Application.Projects.Requests.VO.ProjectPublicIdVO;
 import com.example.demo.Application.Projects.Responses.ProjectDetailsResponse;
 import com.example.demo.Application.Projects.Responses.UserProjectsStats;
 

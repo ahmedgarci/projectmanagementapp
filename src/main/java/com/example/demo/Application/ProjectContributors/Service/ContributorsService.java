@@ -1,28 +1,27 @@
 package com.example.demo.Application.ProjectContributors.Service;
 
 import java.security.SecureRandom;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Application.ProjectContributors.Interface.ProjectContributorsManagementInterface;
 import com.example.demo.Application.ProjectContributors.Mappers.UserMapper;
 import com.example.demo.Application.ProjectContributors.Requests.Main.AddContributorRequest;
 import com.example.demo.Application.ProjectContributors.Responses.ContributorDetailsResponse;
+import com.example.demo.Domain.Constants.InvitationState;
 import com.example.demo.Domain.Repository.InvitationRepository;
 import com.example.demo.Domain.Repository.ProjectRepository;
 import com.example.demo.Domain.Repository.UserRepository;
 import com.example.demo.Domain.models.Invitation;
 import com.example.demo.Domain.models.Project;
 import com.example.demo.Domain.models.User;
-import com.example.demo.Infrastructure.Mailing.MailService;
+import com.example.demo.Infrastructure.Mailing.InvitationEvent;
+import com.example.demo.Infrastructure.Security.SecurityUtils;
 
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,56 +34,61 @@ public class ContributorsService implements ProjectContributorsManagementInterfa
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final MailService mailService;
     private final InvitationRepository invitationRepository;
     private final UserMapper userMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
-    public void addNewContributorToProject(AddContributorRequest addContributorRequest,Authentication authentication) {
+    public void addNewContributorToProject(AddContributorRequest addContributorRequest) {
         User receiver = userRepository.findByEmail(addContributorRequest.getContributorEmailVo().contributorEmail())
             .orElseThrow(()-> new EntityNotFoundException("contributor was not found"));
         
         Project project = projectRepository.findByPublicId(addContributorRequest.getProjectPublicIdVo().projectPublicId())
             .orElseThrow(()-> new EntityNotFoundException("project was not found"));
         
-        if(project.getUsers().contains(receiver)){
-            throw new IllegalStateException("receiver is already a contributor");
+        if(project.getUsers().contains(receiver) || invitationRepository.existsByProjectAndReceiverAndExpiresAtAfter(project, receiver, LocalDateTime.now())){
+            throw new IllegalStateException("receiver is already a contributor or has already a pending invitation");
         }
 
-        User connectedUser = (User)authentication.getPrincipal();
-        LocalDateTime invitationExpirationDate = Instant.ofEpochMilli(System.currentTimeMillis()+360000000).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        Invitation invitation = Invitation.builder().code(generateRandomInvitationCode()).receiver(receiver).sender(connectedUser).expiresAt(invitationExpirationDate)
-            .project(project).build();
+        User connectedUser = SecurityUtils.getConnectedUser();
+        LocalDateTime invitationExpirationDate = LocalDateTime.now().plusDays(1);
+        Invitation invitation = Invitation.builder().code(generateRandomInvitationCode()).receiver(receiver)
+            .sender(connectedUser).expiresAt(invitationExpirationDate)
+            .invitation_status(InvitationState.PENDING).project(project).build();
         invitationRepository.save(invitation);
-        try {
-            mailService.SendEmail(connectedUser.getEmail(),receiver.getEmail(), receiver.getFullName(),project.getProjectName(),invitation.getCode());            
-        } catch (MessagingException messagingException) {
-            messagingException.printStackTrace();
-        }        
+        eventPublisher.publishEvent(new InvitationEvent(connectedUser.getEmail(),receiver.getEmail(), receiver.getFullName(),project.getProjectName(),invitation.getCode()));
+              
     }
 
     @Override
     public void removeContributorFromProject() {
-        
+    
         throw new UnsupportedOperationException("Unimplemented method 'removeContributorFromProject'");
+
     }
 
 
 
     @Override
+    @Transactional
     public void acceptProjectInvite(String code) {
         Invitation invitation = invitationRepository.findByCode(code).orElseThrow(()-> new EntityNotFoundException("inv was not found"));
-        if(invitation.getExpiresAt().isBefore(LocalDateTime.now())){
-            throw new IllegalStateException("invitation expired");
+        if(invitation.getInvitation_status() != InvitationState.PENDING){
+            throw new IllegalStateException("invitation already processed");
         }
 
-        Project project = projectRepository.findById(invitation.getProject().getId()).orElseThrow(()-> new EntityNotFoundException("project was not found"));
-        User receiver = userRepository.findById(invitation.getReceiver().getId()).orElseThrow(()-> new EntityNotFoundException("user was not found"));
+        if(invitation.getExpiresAt().isBefore(LocalDateTime.now())){
+            invitation.setInvitation_status(InvitationState.EXPIRED);
+            invitationRepository.save(invitation);
+            throw new IllegalStateException("ticket invitation is expired");
+        }
+        
+        Project project = invitation.getProject();
+        User receiver = invitation.getReceiver();
         receiver.getProjects().add(project);
         project.getUsers().add(receiver);
-        userRepository.save(receiver);
-        projectRepository.save(project);
+        invitation.setInvitation_status(InvitationState.ACCEPTED);
     }
 
 

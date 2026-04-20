@@ -65,7 +65,7 @@ public class SecurityBeansConfig {
     @Primary 
     public CorsConfigurationSource setUpCorsConfig(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of(frontEnd));
         configuration.setAllowedMethods(List.of("GET","POST","DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
