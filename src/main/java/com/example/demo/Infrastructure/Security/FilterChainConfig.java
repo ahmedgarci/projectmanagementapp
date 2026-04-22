@@ -9,7 +9,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.demo.Application.Auth.Service.LogoutHandlerImpl;
-import com.example.demo.Infrastructure.Auth.Oauth2LoginSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +20,6 @@ public class FilterChainConfig {
     private final RequestFilterConfig requestFilterConfig;
     private final LogoutHandlerImpl logoutHandlerImpl;
     private final CorsConfigurationSource corsConfig;
-    private final Oauth2LoginSuccessHandler oauthSuccessHandler;
     
     @Bean
     public SecurityFilterChain filter(HttpSecurity http)throws Exception{
@@ -40,7 +38,6 @@ public class FilterChainConfig {
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(requestFilterConfig, UsernamePasswordAuthenticationFilter.class)
-      //  .oauth2Login( (oauth) -> oauth.successHandler(oauthSuccessHandler))
         .logout(logout -> logout.logoutUrl("/logout")
                             .addLogoutHandler(logoutHandlerImpl)
         );

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,6 +34,7 @@ public class RequestFilterConfig extends OncePerRequestFilter {
     private final TokenRepository tokenRepository;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
     @Override
+
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -43,7 +45,7 @@ public class RequestFilterConfig extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("Authorization header is  invalid.");
-            filterChain.doFilter(request, response);
+            authenticationEntryPoint.commence(request, response, new CustomJWTexpiredException("jwt token is required"));
             return;
         }
 
@@ -63,7 +65,13 @@ public class RequestFilterConfig extends OncePerRequestFilter {
             return; 
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username == null) {
+            authenticationEntryPoint.commence(request, response,
+                new CustomJWTexpiredException("Invalid token: username missing"));
+            return;
+        }
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
             Optional<Token> savedTokenOpt = tokenRepository.findByToken(token);
             if (savedTokenOpt.isPresent()) {
                 Token savedToken = savedTokenOpt.get();
@@ -78,12 +86,22 @@ public class RequestFilterConfig extends OncePerRequestFilter {
                                 userDetails.getAuthorities()
                         );
                         SecurityContextHolder.getContext().setAuthentication(auth);
+                    }else{
+                        authenticationEntryPoint.commence(request, response,
+                        new CustomJWTexpiredException("Invalid token"));
+                        return;
                     }
                 } else {
                     log.warn("Token is either expired or revoked.");
+                    authenticationEntryPoint.commence(request, response,
+                    new CustomJWTexpiredException("Token expired or revoked"));
+                    return;
                 }
             } else {
                 log.warn("Token not found in database.");
+                authenticationEntryPoint.commence(request, response,
+                    new CustomJWTexpiredException("Token not recognized"));
+                return;
             }
         }
 
