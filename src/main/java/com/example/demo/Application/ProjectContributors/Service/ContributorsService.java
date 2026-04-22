@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.Application.ProjectContributors.Interface.ProjectContributorsManagementInterface;
 import com.example.demo.Application.ProjectContributors.Mappers.UserMapper;
 import com.example.demo.Application.ProjectContributors.Requests.Main.AddContributorRequest;
+import com.example.demo.Application.ProjectContributors.Requests.Main.RemoveContributorRequest;
 import com.example.demo.Application.ProjectContributors.Responses.ContributorDetailsResponse;
 import com.example.demo.Domain.Constants.InvitationState;
 import com.example.demo.Domain.Repository.InvitationRepository;
 import com.example.demo.Domain.Repository.ProjectRepository;
+import com.example.demo.Domain.Repository.TasksRepository;
 import com.example.demo.Domain.Repository.UserRepository;
 import com.example.demo.Domain.models.Invitation;
 import com.example.demo.Domain.models.Project;
@@ -37,6 +39,7 @@ public class ContributorsService implements ProjectContributorsManagementInterfa
     private final InvitationRepository invitationRepository;
     private final UserMapper userMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TasksRepository tasksRepository;
 
     @Override
     @Transactional
@@ -62,10 +65,12 @@ public class ContributorsService implements ProjectContributorsManagementInterfa
     }
 
     @Override
-    public void removeContributorFromProject() {
-    
-        throw new UnsupportedOperationException("Unimplemented method 'removeContributorFromProject'");
-
+    @Transactional
+    public void removeContributorFromProject(RemoveContributorRequest removeContributorRequest) {
+        User user = userRepository.findByPublicId(removeContributorRequest.contributorPublicId()).orElseThrow(()-> new EntityNotFoundException("contributor was not found"));
+        Project project =  projectRepository.findByPublicId(removeContributorRequest.projectPublicId()).orElseThrow(()-> new EntityNotFoundException("project was not found"));
+        tasksRepository.unassignUserFromProjectTasks(project,user);
+        user.getProjects().remove(project);
     }
 
 

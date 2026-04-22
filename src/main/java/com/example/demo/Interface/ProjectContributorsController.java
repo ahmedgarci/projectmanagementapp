@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Application.ProjectContributors.Interface.ProjectContributorsManagementInterface;
 import com.example.demo.Application.ProjectContributors.Requests.Main.AddContributorRequest;
+import com.example.demo.Application.ProjectContributors.Requests.Main.RemoveContributorRequest;
 import com.example.demo.Application.ProjectContributors.Responses.ContributorDetailsResponse;
 
 import jakarta.validation.Valid;
@@ -45,6 +46,13 @@ public class ProjectContributorsController {
     public ResponseEntity<List<ContributorDetailsResponse>> getAllProjectContributors(@PathVariable(name = "projectPublicId") String projectPublicId) {
         return  ResponseEntity.ok(projectContributorService.getProjectContributors(projectPublicId));
     }
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeContributorFromProject(@RequestBody RemoveContributorRequest removeContributorRequest) {
+        projectContributorService.removeContributorFromProject(removeContributorRequest);
+        return ResponseEntity.ok().build();
+    }
+    
     
     
     

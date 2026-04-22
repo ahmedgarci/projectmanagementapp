@@ -3,6 +3,7 @@ package com.example.demo.Domain.Repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.Application.Tasks.Constants.TasksConstants;
 import com.example.demo.Domain.models.Project;
 import com.example.demo.Domain.models.Tasks;
+import com.example.demo.Domain.models.User;
 
 @Repository
 public interface TasksRepository extends CrudRepository<Tasks,String> {
@@ -25,4 +27,9 @@ public interface TasksRepository extends CrudRepository<Tasks,String> {
 
     @Query(name = TasksConstants.GET_USER_ALL_PROJECTS_URGENT_TASKS)
     List<Tasks> findAllUserUrgetTasks(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE Tasks t SET t.user = null WHERE t.project = :project AND t.user = :user")
+    void unassignUserFromProjectTasks(Project project, User user);
+
 }

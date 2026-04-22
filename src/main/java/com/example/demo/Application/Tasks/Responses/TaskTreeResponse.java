@@ -3,6 +3,7 @@ package com.example.demo.Application.Tasks.Responses;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.demo.Domain.models.Tasks;
 
@@ -27,6 +28,6 @@ public class TaskTreeResponse {
         this.task = taks.getTask();
         this.children = new ArrayList<>();
         this.stage = taks.getStage().getStageName();
-        this.assignedToUserName = taks.getUser().getFullName();
+        this.assignedToUserName = Optional.ofNullable(taks.getUser()).map(u -> u.getFullName()).orElse("unassigned");
     }
 }

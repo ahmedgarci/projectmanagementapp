@@ -68,10 +68,11 @@ public class Tasks {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",nullable = true)
     private User user;
 
     @ManyToOne 
     @JoinColumn(name = "stage_id")   
     private Stages stage ;
+
 }
