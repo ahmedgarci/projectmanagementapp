@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.demo.Domain.Constants.ProjectConstants;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -66,7 +67,7 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Invitation> projecInvitations;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Tasks> projectTasks;
 
 
